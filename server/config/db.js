@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 const connectDB = async (retries = 5, delay = 5000) => {
   const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/goodcargo-reach';
   
+  console.log('Спроба підключення до MongoDB...');
+  console.log('MongoDB URI встановлено:', mongoURI ? 'Так' : 'Ні');
+  
   for (let i = 0; i < retries; i++) {
     try {
       await mongoose.connect(mongoURI, {

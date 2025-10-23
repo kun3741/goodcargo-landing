@@ -9,6 +9,9 @@ router.post('/login', async (req, res) => {
     const { password } = req.body;
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     
+    console.log('Login attempt received');
+    console.log('Admin password configured:', !!process.env.ADMIN_PASSWORD);
+    
     if (password === adminPassword) {
       const token = jwt.sign(
         { role: 'admin' },
