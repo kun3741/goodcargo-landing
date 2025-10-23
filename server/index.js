@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 import contentRoutes from './routes/content.js';
 import authRoutes from './routes/auth.js';
@@ -22,12 +23,15 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Підключення до БД
-connectDB();
-
 // API Routes
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.use('/api/auth', authRoutes);
@@ -48,8 +52,45 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
+// Запуск сервера
+const server = app.listen(PORT, () => {
   console.log(`Сервер запущено на порті ${PORT}`);
   console.log(`Режим: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Підключення до БД (асинхронно, не блокуємо запуск сервера)
+connectDB().catch(err => {
+  console.error('Критична помилка підключення до БД:', err);
+});
+
+// Graceful shutdown
+const gracefulShutdown = (signal) => {
+  console.log(`\n${signal} отримано. Закриття сервера...`);
+  server.close(() => {
+    console.log('HTTP сервер закрито');
+    mongoose.connection.close(false, () => {
+      console.log('MongoDB з\'єднання закрито');
+      process.exit(0);
+    });
+  });
+
+  // Примусове закриття після 10 секунд
+  setTimeout(() => {
+    console.error('Не вдалося закрити з\'єднання вчасно, примусовий вихід');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Обробка неперехоплених помилок
+process.on('unhandledRejection', (err) => {
+  console.error('Неперехоплена Promise rejection:', err);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Неперехоплений виняток:', err);
+  gracefulShutdown('UNCAUGHT_EXCEPTION');
 });
 
