@@ -17,11 +17,11 @@ export const DocumentsSection = ({ title, documents }: DocumentsSectionProps) =>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 animate-fade-in">
             {title}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
             {documents.map((doc, index) => (
               <Card 
                 key={doc.id} 
-                className="hover:shadow-xl hover:scale-105 transition-all duration-300 animate-scale-in group"
+                className="hover:shadow-xl hover:scale-105 transition-all duration-300 animate-scale-in group w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
                 <CardContent className="p-6 flex flex-col items-center text-center">

@@ -19,6 +19,9 @@ export const TestimonialsSection = ({ title, testimonials }: TestimonialsSection
     })
   );
 
+  // Дублюємо відгуки для безперервного зациклювання
+  const duplicatedTestimonials = [...testimonials, ...testimonials, ...testimonials];
+
   return (
     <AnimatedBackground variant="dots" className="py-20 bg-muted">
       <section>
@@ -30,7 +33,7 @@ export const TestimonialsSection = ({ title, testimonials }: TestimonialsSection
             opts={{
               align: "start",
               loop: true,
-              dragFree: true,
+              skipSnaps: false,
             }}
             plugins={[autoplayRef.current]}
             className="w-full max-w-6xl mx-auto"
@@ -38,11 +41,10 @@ export const TestimonialsSection = ({ title, testimonials }: TestimonialsSection
             onMouseLeave={() => autoplayRef.current.play()}
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {testimonials.map((testimonial, index) => (
+              {duplicatedTestimonials.map((testimonial, index) => (
                 <CarouselItem 
-                  key={testimonial.id} 
-                  className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  key={`${testimonial.id}-${index}`} 
+                  className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
                 >
                   <Card className="h-full hover:shadow-lg hover:scale-105 transition-all duration-300">
                     <CardContent className="p-6 flex flex-col items-center">
