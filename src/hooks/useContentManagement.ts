@@ -188,6 +188,29 @@ const defaultContent: Content = {
   },
 };
 
+// Функція для безпечного злиття контенту з дефолтними значеннями
+const mergeWithDefaults = (apiContent: any): Content => {
+  return {
+    hero: apiContent?.hero || defaultContent.hero,
+    testimonials: {
+      title: apiContent?.testimonials?.title || defaultContent.testimonials.title,
+      items: Array.isArray(apiContent?.testimonials?.items) ? apiContent.testimonials.items : defaultContent.testimonials.items,
+    },
+    advantages: {
+      title: apiContent?.advantages?.title || defaultContent.advantages.title,
+      description: apiContent?.advantages?.description || defaultContent.advantages.description,
+      backgroundImage: apiContent?.advantages?.backgroundImage || defaultContent.advantages.backgroundImage,
+      items: Array.isArray(apiContent?.advantages?.items) ? apiContent.advantages.items : defaultContent.advantages.items,
+    },
+    documents: {
+      title: apiContent?.documents?.title || defaultContent.documents.title,
+      items: Array.isArray(apiContent?.documents?.items) ? apiContent.documents.items : defaultContent.documents.items,
+    },
+    contact: apiContent?.contact || defaultContent.contact,
+    telegram: apiContent?.telegram || defaultContent.telegram,
+  };
+};
+
 export const useContentManagement = () => {
   const [content, setContent] = useState<Content>(defaultContent);
   const [loading, setLoading] = useState(true);
@@ -197,12 +220,23 @@ export const useContentManagement = () => {
     const fetchContent = async () => {
       try {
         const data = await api.getContent();
+        
+        if (!data) {
+          console.warn('API повернув порожні дані, використовуємо дефолтний контент');
+          setContent(defaultContent);
+          return;
+        }
+        
         // Видаляємо _id та __v поля MongoDB
         const { _id, __v, createdAt, updatedAt, ...cleanContent } = data;
-        setContent(cleanContent);
+        
+        // Злиття з дефолтними значеннями для безпеки
+        const safeContent = mergeWithDefaults(cleanContent);
+        setContent(safeContent);
       } catch (error) {
         console.error('Помилка завантаження контенту:', error);
         // Використовуємо defaultContent якщо не вдалося завантажити
+        setContent(defaultContent);
       } finally {
         setLoading(false);
       }

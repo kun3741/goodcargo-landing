@@ -10,6 +10,9 @@ interface DocumentsSectionProps {
 }
 
 export const DocumentsSection = ({ title, documents }: DocumentsSectionProps) => {
+  // Безпечна перевірка documents
+  const safeDocuments = Array.isArray(documents) ? documents : [];
+  
   return (
     <AnimatedBackground variant="gradient" className="py-20 bg-background">
       <section>
@@ -18,7 +21,7 @@ export const DocumentsSection = ({ title, documents }: DocumentsSectionProps) =>
             {title}
           </h2>
           <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
-            {documents.map((doc, index) => (
+            {safeDocuments.map((doc, index) => (
               <Card 
                 key={doc.id} 
                 className="hover:shadow-xl hover:scale-105 transition-all duration-300 animate-scale-in group w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"

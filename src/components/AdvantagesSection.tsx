@@ -13,6 +13,9 @@ export const AdvantagesSection = ({ content }: AdvantagesSectionProps) => {
     return Icon ? <Icon className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" /> : null;
   };
 
+  // Безпечна перевірка advantages items
+  const safeItems = Array.isArray(content?.items) ? content.items : [];
+
   return (
     <section 
       className="py-20 bg-cover bg-center relative overflow-hidden"
@@ -57,7 +60,7 @@ export const AdvantagesSection = ({ content }: AdvantagesSectionProps) => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {content.items.map((advantage, index) => (
+          {safeItems.map((advantage, index) => (
             <Card 
               key={advantage.id} 
               className="bg-card/95 backdrop-blur animate-scale-in hover:scale-105 hover:shadow-2xl transition-all duration-300 group"

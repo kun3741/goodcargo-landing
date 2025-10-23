@@ -19,8 +19,13 @@ export const TestimonialsSection = ({ title, testimonials }: TestimonialsSection
     })
   );
 
+  // Безпечна перевірка testimonials
+  const safeTestimonials = Array.isArray(testimonials) && testimonials.length > 0 ? testimonials : [];
+  
   // Дублюємо відгуки для безперервного зациклювання
-  const duplicatedTestimonials = [...testimonials, ...testimonials, ...testimonials];
+  const duplicatedTestimonials = safeTestimonials.length > 0 
+    ? [...safeTestimonials, ...safeTestimonials, ...safeTestimonials]
+    : [];
 
   return (
     <AnimatedBackground variant="dots" className="py-20 bg-muted">
