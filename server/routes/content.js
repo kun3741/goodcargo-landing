@@ -4,6 +4,8 @@ import Content from '../models/Content.js';
 const router = express.Router();
 
 // Дефолтний контент
+// ВАЖЛИВО: Шляхи до картинок повинні збігатися з іменами файлів у папці dist/assets
+// після білду (без хешів, завдяки налаштуванням у vite.config.ts)
 const defaultContent = {
   hero: {
     title: 'Допоможіть нам доставити допомогу туди, де вона потрібна',

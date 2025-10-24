@@ -82,10 +82,47 @@ app.put('/api/content', authMiddleware, contentRoutes);
 // Serve static files from frontend build (production)
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, '../dist');
-  app.use(express.static(frontendPath));
   
-  // Всі інші маршрути відправляємо до React app
+  console.log('Production mode: serving static files from', frontendPath);
+  
+  // Логування запитів до статичних файлів (ДО express.static)
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/assets/')) {
+      console.log(`📸 Static file request: ${req.path}`);
+    }
+    next();
+  });
+  
+  // Додаткові налаштування для статичних файлів
+  const staticOptions = {
+    maxAge: '1d', // Кешування на 1 день
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
+      // Додаємо правильні заголовки для різних типів файлів
+      if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+        res.setHeader('Content-Type', 'image/jpeg');
+      } else if (filePath.endsWith('.png')) {
+        res.setHeader('Content-Type', 'image/png');
+      } else if (filePath.endsWith('.svg')) {
+        res.setHeader('Content-Type', 'image/svg+xml');
+      } else if (filePath.endsWith('.webp')) {
+        res.setHeader('Content-Type', 'image/webp');
+      }
+      // Дозволяємо кешування
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 години
+    }
+  };
+  
+  // Обслуговування статичних файлів з правильними заголовками
+  app.use(express.static(frontendPath, staticOptions));
+  
+  // Всі інші маршрути (не API і не статичні файли) відправляємо до React app
   app.get('*', (req, res) => {
+    // Не показуємо звичайні файли
+    if (!req.path.startsWith('/api') && !req.path.match(/\.(js|css|png|jpg|jpeg|svg|ico|webp)$/)) {
+      console.log(`🌐 SPA route: ${req.path}`);
+    }
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }

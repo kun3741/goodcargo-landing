@@ -21,4 +21,20 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Зберігаємо оригінальні імена файлів для картинок
+        assetFileNames: (assetInfo) => {
+          let extType = assetInfo.name ? assetInfo.name.split('.').at(1) : '';
+          // Для зображень зберігаємо оригінальну структуру без хешу
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico|webp/i.test(extType || '')) {
+            return `assets/[name].[ext]`;
+          }
+          // Для інших файлів (CSS, шрифти тощо) використовуємо хеш
+          return `assets/[name]-[hash].[ext]`;
+        },
+      },
+    },
+  },
 }));
