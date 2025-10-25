@@ -30,14 +30,20 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
     // Перевіряємо localStorage, чи вже показували pop-up
     const hasSeenPopup = localStorage.getItem("hasSeenContactPopup");
     
+    console.log('ContactPopup: hasSeenPopup =', hasSeenPopup);
+    
     if (!hasSeenPopup && !hasShown) {
+      console.log('ContactPopup: Запускаємо таймер на 5 секунд (для тестування)');
       const timer = setTimeout(() => {
+        console.log('ContactPopup: Показуємо pop-up!');
         setIsOpen(true);
         setHasShown(true);
         localStorage.setItem("hasSeenContactPopup", "true");
-      }, 20000); // 20 секунд
+      }, 20000);
 
       return () => clearTimeout(timer);
+    } else {
+      console.log('ContactPopup: Не показуємо - вже бачили');
     }
   }, [hasShown]);
 
@@ -95,10 +101,10 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[450px] max-h-[90vh] overflow-y-auto p-0 border-0 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <DialogContent className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto p-0 border-0 bg-gradient-to-br from-primary/5 via-background to-accent/5">
         {/* Декоративні елементи */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse animation-delay-1000" />
+        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-28 h-28 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse animation-delay-1000" />
         
         {/* Заголовок з градієнтом */}
         <div className="relative bg-gradient-to-r from-primary to-accent p-4 text-white">
@@ -123,18 +129,17 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
         </div>
 
         {/* Контент з формою */}
-        <div className="p-5 space-y-5">
+        <div className="p-4 space-y-4">
           {/* Швидкий зв'язок через Telegram */}
           <div className="text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Найшвидший спосіб зв'язатися
             </p>
             <Button
-              size="lg"
               onClick={handleTelegramClick}
-              className="w-full gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              className="w-full gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 h-10"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4" />
               Написати в Telegram
             </Button>
           </div>
@@ -150,14 +155,14 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
           </div>
 
           {/* Форма заявки */}
-          <div className="space-y-3">
-            <p className="text-center text-sm text-muted-foreground">
+          <div className="space-y-2">
+            <p className="text-center text-xs text-muted-foreground">
               Залиште заявку, і ми зв'яжемося з вами
             </p>
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="popup-name" className="flex items-center gap-2 text-sm">
-                  <User className="w-4 h-4 text-primary" />
+            <form onSubmit={handleSubmit} className="space-y-2.5">
+              <div className="space-y-1">
+                <Label htmlFor="popup-name" className="flex items-center gap-1.5 text-xs">
+                  <User className="w-3.5 h-3.5 text-primary" />
                   Ім'я *
                 </Label>
                 <Input
@@ -166,13 +171,13 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="Ваше ім'я"
-                  className="transition-all focus:scale-[1.02] focus:shadow-md"
+                  className="transition-all focus:scale-[1.02] focus:shadow-md h-9 text-sm"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="popup-phone" className="flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4 text-primary" />
+              <div className="space-y-1">
+                <Label htmlFor="popup-phone" className="flex items-center gap-1.5 text-xs">
+                  <Phone className="w-3.5 h-3.5 text-primary" />
                   Телефон *
                 </Label>
                 <Input
@@ -182,13 +187,13 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
                   onChange={(e) => setPhone(e.target.value)}
                   required
                   placeholder="+380..."
-                  className="transition-all focus:scale-[1.02] focus:shadow-md"
+                  className="transition-all focus:scale-[1.02] focus:shadow-md h-9 text-sm"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="popup-email" className="flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4 text-primary" />
+              <div className="space-y-1">
+                <Label htmlFor="popup-email" className="flex items-center gap-1.5 text-xs">
+                  <Mail className="w-3.5 h-3.5 text-primary" />
                   Email *
                 </Label>
                 <Input
@@ -198,13 +203,13 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="your@email.com"
-                  className="transition-all focus:scale-[1.02] focus:shadow-md"
+                  className="transition-all focus:scale-[1.02] focus:shadow-md h-9 text-sm"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all hover:scale-105 shadow-lg hover:shadow-xl py-5 mt-4"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all hover:scale-105 shadow-lg hover:shadow-xl h-10 mt-3 text-sm"
                 disabled={loading}
               >
                 {loading ? (
@@ -220,6 +225,22 @@ export const ContactPopup = ({ telegramUsername }: ContactPopupProps) => {
                 )}
               </Button>
             </form>
+          </div>
+
+          {/* Статистика */}
+          <div className="grid grid-cols-3 gap-2 pt-3 border-t">
+            <div className="text-center p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
+              <div className="text-xl font-bold text-primary">500+</div>
+              <div className="text-[10px] text-muted-foreground leading-tight">волонтерів</div>
+            </div>
+            <div className="text-center p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
+              <div className="text-xl font-bold text-primary">10М₴</div>
+              <div className="text-[10px] text-muted-foreground leading-tight">допомоги</div>
+            </div>
+            <div className="text-center p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
+              <div className="text-xl font-bold text-primary">100%</div>
+              <div className="text-[10px] text-muted-foreground leading-tight">прозорість</div>
+            </div>
           </div>
         </div>
       </DialogContent>
