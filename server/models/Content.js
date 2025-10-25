@@ -17,7 +17,10 @@ const advantageSchema = new mongoose.Schema({
 const documentSchema = new mongoose.Schema({
   id: String,
   title: String,
-  fileUrl: String
+  fileUrl: String,
+  fileName: String,    // Ім'я файлу
+  fileData: String,    // Base64 дані файлу
+  fileType: String     // MIME тип файлу
 });
 
 const contentSchema = new mongoose.Schema({

@@ -31,6 +31,9 @@ export interface Document {
   id: string;
   title: string;
   fileUrl: string;
+  fileName?: string; // Ім'я файлу
+  fileData?: string; // Base64 дані файлу
+  fileType?: string; // MIME тип файлу
 }
 
 export interface ContactInfo {

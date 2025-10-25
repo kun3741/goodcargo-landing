@@ -464,30 +464,70 @@ const Admin = () => {
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
-                      <Input
-                        placeholder="Назва документа"
-                        value={item.title}
-                        onChange={(e) => {
-                          const items = [...localContent.documents.items];
-                          items[index] = { ...items[index], title: e.target.value };
-                          setLocalContent({
-                            ...localContent,
-                            documents: { ...localContent.documents, items },
-                          });
-                        }}
-                      />
-                      <Input
-                        placeholder="URL файлу"
-                        value={item.fileUrl}
-                        onChange={(e) => {
-                          const items = [...localContent.documents.items];
-                          items[index] = { ...items[index], fileUrl: e.target.value };
-                          setLocalContent({
-                            ...localContent,
-                            documents: { ...localContent.documents, items },
-                          });
-                        }}
-                      />
+                      <div>
+                        <Label>Назва документа</Label>
+                        <Input
+                          placeholder="Назва документа"
+                          value={item.title}
+                          onChange={(e) => {
+                            const items = [...localContent.documents.items];
+                            items[index] = { ...items[index], title: e.target.value };
+                            setLocalContent({
+                              ...localContent,
+                              documents: { ...localContent.documents, items },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Label>Файл документа</Label>
+                        <Input
+                          type="file"
+                          accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              // Перевірка розміру (макс 10MB)
+                              if (file.size > 10 * 1024 * 1024) {
+                                toast({
+                                  title: "Помилка",
+                                  description: "Файл занадто великий. Максимальний розмір: 10MB",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const items = [...localContent.documents.items];
+                                items[index] = {
+                                  ...items[index],
+                                  fileName: file.name,
+                                  fileData: event.target?.result as string,
+                                  fileType: file.type,
+                                  fileUrl: '', // Очищаємо старий URL
+                                };
+                                setLocalContent({
+                                  ...localContent,
+                                  documents: { ...localContent.documents, items },
+                                });
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="cursor-pointer"
+                        />
+                        {item.fileName && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            📎 {item.fileName}
+                          </p>
+                        )}
+                        {item.fileUrl && !item.fileName && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            🔗 Посилання: {item.fileUrl}
+                          </p>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}

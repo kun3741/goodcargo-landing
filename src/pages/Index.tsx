@@ -4,6 +4,7 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { AdvantagesSection } from "@/components/AdvantagesSection";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { ContactSection } from "@/components/ContactSection";
+import { ContactPopup } from "@/components/ContactPopup";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -24,6 +25,9 @@ const Index = () => {
         telegramUsername={content.contact.telegram}
       />
       <Footer contact={content.contact} />
+      
+      {/* Pop-up форма зворотнього зв'язку (з'являється через 20 секунд) */}
+      <ContactPopup telegramUsername={content.contact.telegram} />
     </div>
   );
 };

@@ -13,6 +13,22 @@ export const DocumentsSection = ({ title, documents }: DocumentsSectionProps) =>
   // Безпечна перевірка documents
   const safeDocuments = Array.isArray(documents) ? documents : [];
   
+  // Функція для завантаження файлу
+  const handleDownload = (doc: Document) => {
+    if (doc.fileData) {
+      // Якщо є завантажений файл (base64)
+      const link = document.createElement('a');
+      link.href = doc.fileData;
+      link.download = doc.fileName || `${doc.title}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (doc.fileUrl) {
+      // Якщо є посилання
+      window.open(doc.fileUrl, '_blank');
+    }
+  };
+  
   return (
     <AnimatedBackground variant="gradient" className="py-20 bg-background">
       <section>
@@ -34,13 +50,17 @@ export const DocumentsSection = ({ title, documents }: DocumentsSectionProps) =>
                       <Download className="w-3 h-3 text-secondary-foreground" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold mb-4">{doc.title}</h3>
+                  <h3 className="text-lg font-semibold mb-2">{doc.title}</h3>
+                  {doc.fileName && (
+                    <p className="text-xs text-muted-foreground mb-4">📎 {doc.fileName}</p>
+                  )}
                   <Button
                     variant="outline"
-                    onClick={() => window.open(doc.fileUrl, '_blank')}
+                    onClick={() => handleDownload(doc)}
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                   >
-                    Переглянути
+                    <Download className="w-4 h-4 mr-2" />
+                    Завантажити
                   </Button>
                 </CardContent>
               </Card>
