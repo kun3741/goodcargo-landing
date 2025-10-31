@@ -17,10 +17,44 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
   const { toast } = useToast();
+
+  const validate = () => {
+    const newErrors: { name?: string; phone?: string; email?: string } = {};
+    const nameTrimmed = name.trim();
+    const emailTrimmed = email.trim();
+    const phoneTrimmed = phone.trim();
+
+    const nameRegex = /^[A-Za-zА-Яа-яЁёІіЇїЄєҐґ' -]{2,}$/u;
+    if (!nameRegex.test(nameTrimmed)) {
+      newErrors.name = "Введіть реальне ім'я (мін. 2 літери)";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(emailTrimmed)) {
+      newErrors.email = "Введіть коректний email";
+    }
+
+    const uaPhoneRegex = /^\+380\d{9}$/;
+    if (!uaPhoneRegex.test(phoneTrimmed)) {
+      newErrors.phone = "Телефон у форматі +380XXXXXXXXX";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) {
+      toast({
+        title: "Перевірте поля",
+        description: "Заповніть форму коректними даними",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
 
     try {
@@ -106,6 +140,9 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         placeholder="Ваше ім'я"
                         className="transition-all focus:scale-105"
                       />
+                      {errors.name && (
+                        <p className="text-sm text-red-600 mt-1">{errors.name}</p>
+                      )}
                     </div>
                     <div className="animate-slide-in-left delay-100">
                       <Label htmlFor="phone">Телефон *</Label>
@@ -114,10 +151,14 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
+                        pattern="\+380\d{9}"
                         required
                         placeholder="+380..."
                         className="transition-all focus:scale-105"
                       />
+                      {errors.phone && (
+                        <p className="text-sm text-red-600 mt-1">{errors.phone}</p>
+                      )}
                     </div>
                     <div className="animate-slide-in-left delay-200">
                       <Label htmlFor="email">Email *</Label>
@@ -130,6 +171,9 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         placeholder="your@email.com"
                         className="transition-all focus:scale-105"
                       />
+                      {errors.email && (
+                        <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                      )}
                     </div>
                     <Button 
                       type="submit" 
