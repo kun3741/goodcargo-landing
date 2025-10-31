@@ -27,12 +27,12 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
     const phoneTrimmed = phone.trim();
 
     const nameRegex = /^[A-Za-zА-Яа-яЁёІіЇїЄєҐґ' -]{2,}$/u;
-    if (!nameRegex.test(nameTrimmed)) {
+    if (!nameRegex.test(nameTrimmed) || nameTrimmed.length > 30) {
       newErrors.name = "Введіть реальне ім'я (мін. 2 літери)";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    if (!emailRegex.test(emailTrimmed)) {
+    if (!emailRegex.test(emailTrimmed) || emailTrimmed.length > 60) {
       newErrors.email = "Введіть коректний email";
     }
 
@@ -136,6 +136,7 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         id="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        maxLength={30}
                         required
                         placeholder="Ваше ім'я"
                         className="transition-all focus:scale-105"
@@ -152,6 +153,7 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         pattern="\+380\d{9}"
+                        maxLength={13}
                         required
                         placeholder="+380..."
                         className="transition-all focus:scale-105"
@@ -167,6 +169,7 @@ export const ContactSection = ({ telegramUsername }: ContactSectionProps) => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        maxLength={60}
                         required
                         placeholder="your@email.com"
                         className="transition-all focus:scale-105"

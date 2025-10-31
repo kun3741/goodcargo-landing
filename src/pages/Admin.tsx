@@ -252,6 +252,37 @@ const Admin = () => {
                         }}
                       />
                       <Input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          // 3MB ліміт
+                          if (file.size > 3 * 1024 * 1024) {
+                            toast({
+                              title: "Занадто великий файл",
+                              description: "Максимальний розмір зображення 3MB",
+                              variant: "destructive",
+                            });
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const items = [...localContent.testimonials.items];
+                            items[index] = {
+                              ...items[index],
+                              photo: String(event.target?.result || ''),
+                            };
+                            setLocalContent({
+                              ...localContent,
+                              testimonials: { ...localContent.testimonials, items },
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                        className="cursor-pointer"
+                      />
+                      <Input
                         placeholder="Ім'я"
                         value={item.title}
                         onChange={(e) => {
