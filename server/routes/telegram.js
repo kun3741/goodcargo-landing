@@ -24,7 +24,25 @@ router.post('/send-application', async (req, res) => {
       });
     }
 
-    const message = `🆕 Нова заявка!\n\n👤 Ім'я: ${name}\n📱 Телефон: ${phone}\n📧 Email: ${email}`;
+    const nameTrimmed = String(name).trim();
+    const emailTrimmed = String(email).trim();
+    const phoneTrimmed = String(phone).trim();
+
+    const nameRegex = /^[A-Za-zА-Яа-яЁёІіЇїЄєҐґ' -]{2,}$/u;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const uaPhoneRegex = /^\+380\d{9}$/;
+
+    if (!nameRegex.test(nameTrimmed)) {
+      return res.status(400).json({ success: false, message: "Невалідне ім'я" });
+    }
+    if (!emailRegex.test(emailTrimmed)) {
+      return res.status(400).json({ success: false, message: 'Невалідний email' });
+    }
+    if (!uaPhoneRegex.test(phoneTrimmed)) {
+      return res.status(400).json({ success: false, message: 'Телефон у форматі +380XXXXXXXXX' });
+    }
+
+    const message = `🆕 Нова заявка!\n\n👤 Ім'я: ${nameTrimmed}\n📱 Телефон: ${phoneTrimmed}\n📧 Email: ${emailTrimmed}`;
 
     const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
