@@ -185,6 +185,35 @@ const Admin = () => {
                     }
                     placeholder="https://..."
                   />
+                  <div className="mt-2">
+                    <Label>Або завантажити фото</Label>
+                    <Input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/jpg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        // 5MB ліміт для фонового зображення
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast({
+                            title: "Занадто великий файл",
+                            description: "Максимальний розмір зображення 5MB",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          setLocalContent({
+                            ...localContent,
+                            hero: { ...localContent.hero, backgroundImage: String(event.target?.result || '') },
+                          });
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -375,6 +404,35 @@ const Admin = () => {
                     }
                     placeholder="https://..."
                   />
+                  <div className="mt-2">
+                    <Label>Або завантажити фото</Label>
+                    <Input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/jpg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        // 5MB ліміт для фонового зображення
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast({
+                            title: "Занадто великий файл",
+                            description: "Максимальний розмір зображення 5MB",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          setLocalContent({
+                            ...localContent,
+                            advantages: { ...localContent.advantages, backgroundImage: String(event.target?.result || '') },
+                          });
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
                 </div>
                 {localContent.advantages.items.map((item, index) => (
                   <Card key={item.id}>
